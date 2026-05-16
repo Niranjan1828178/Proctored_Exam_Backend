@@ -9,4 +9,4 @@ RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/Proctored_Exam_Backend-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/exam-0.0.1-SNAPSHOT.jar"]
