@@ -1,16 +1,19 @@
 package com.proctoredExam.exam.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.proctoredExam.exam.dto.PublisherResponse;
 import com.proctoredExam.exam.dto.TestRequest;
 import com.proctoredExam.exam.dto.TestResponse;
 import com.proctoredExam.exam.entity.ExamTest;
 import com.proctoredExam.exam.entity.TestStatus;
 import com.proctoredExam.exam.entity.User;
 import com.proctoredExam.exam.repository.TestRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -93,6 +96,28 @@ public class TestService {
         ExamTest test = testRepository.findById(testId)
                 .orElseThrow(() -> new RuntimeException("Test not found"));
         return mapToResponse(test);
+    }
+
+    public PublisherResponse getPublisherByTestId(Long testId) {
+        ExamTest test = testRepository.findById(testId)
+                .orElseThrow(() -> new RuntimeException("Test not found"));
+
+        if (test.getCreatedBy() == null || test.getCreatedBy().getUser() == null) {
+            throw new RuntimeException("Publisher not found for this test");
+        }
+
+        com.proctoredExam.exam.entity.User user = test.getCreatedBy().getUser();
+        String first = user.getFirstname() != null ? user.getFirstname() : "";
+        String last = user.getLastname() != null ? user.getLastname() : "";
+        String fullName = (first + " " + last).trim();
+
+        return PublisherResponse.builder()
+                .clientId(test.getCreatedBy().getId())
+                .firstname(first)
+                .lastname(last)
+                .email(user.getEmail())
+                .fullName(fullName.isEmpty() ? user.getEmail() : fullName)
+                .build();
     }
 
     public void deleteTest(Long testId, User currentUser) {

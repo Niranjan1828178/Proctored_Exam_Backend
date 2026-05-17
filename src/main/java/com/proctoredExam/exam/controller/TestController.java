@@ -1,16 +1,25 @@
 package com.proctoredExam.exam.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.proctoredExam.exam.dto.TestRequest;
 import com.proctoredExam.exam.dto.TestResponse;
 import com.proctoredExam.exam.entity.User;
 import com.proctoredExam.exam.service.TestService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/tests")
@@ -57,6 +66,14 @@ public class TestController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(testService.getTestById(id));
+    }
+
+    @GetMapping("/{id}/publisher")
+    @PreAuthorize("hasAnyAuthority('USER', 'CLIENT', 'ADMIN')")
+    public ResponseEntity<com.proctoredExam.exam.dto.PublisherResponse> getPublisherByTestId(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(testService.getPublisherByTestId(id));
     }
 
     @DeleteMapping("/{id}")
