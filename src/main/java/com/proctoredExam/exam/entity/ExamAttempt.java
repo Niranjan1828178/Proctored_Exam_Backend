@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -41,4 +39,13 @@ public class ExamAttempt {
     private Integer score;
 
     private Integer totalQuestions;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'PENDING'")
+    private QualificationStatus qualificationStatus = QualificationStatus.PENDING;
+
+//    @Builder.Default
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private Integer totalScore;
 }

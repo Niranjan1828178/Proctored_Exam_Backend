@@ -1,5 +1,6 @@
 package com.proctoredExam.exam.controller;
 
+import com.proctoredExam.exam.dto.ExamAttemptQualificationRequest;
 import com.proctoredExam.exam.dto.ExamAttemptResponse;
 import com.proctoredExam.exam.entity.User;
 import com.proctoredExam.exam.service.ExamAttemptService;
@@ -69,5 +70,17 @@ public class ExamAttemptController {
             @AuthenticationPrincipal User currentUser
     ) {
         return ResponseEntity.ok(examAttemptService.getResultsForTest(testId, currentUser));
+    }
+
+    @PutMapping("/{attemptId}/qualification")
+    @PreAuthorize("hasAnyAuthority('CLIENT', 'ADMIN')")
+    public ResponseEntity<ExamAttemptResponse> updateQualificationStatus(
+            @PathVariable Long attemptId,
+            @RequestBody ExamAttemptQualificationRequest request,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.ok(
+                examAttemptService.updateQualificationStatusAndReturnResponse(attemptId, request.getQualificationStatus(), currentUser)
+        );
     }
 }
